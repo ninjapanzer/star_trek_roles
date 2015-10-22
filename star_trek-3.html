@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+<style>
+
+.link {
+  fill: none;
+  stroke: #666;
+  stroke-width: 1.5px;
+}
+
+.node circle{
+  fill: #aaa;
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+text {
+  font: 10px sans-serif;
+  pointer-events: none;
+}
+
+</style>
+<body>
+<script>
+
+
+var shirt = [
+{name: "Darnell", color: "Blue"},
+{name: "Ensign Berkeley", color: "Red_jumpsuit"},
+{name: "Green", color: "Gold"},w
+{name: "Blueshirt-1", color: "Blue"},
+{name: "Gold_skirt-1", color: "Gold"},
+{name: "Goldshirt-1", color: "Gold"},
+{name: "Goldshirt-2", color: "Gold"},
+{name: "Kirk", color: "Green"},
+{name: "Lt. Leslie", color: "Red"},
+{name: "McCoy", color: "Blue"},
+{name: "Rand", color: "Red"},
+{name: "Redshirt-1", color: "Red"},
+{name: "Redshirt-2", color: "Red"},
+{name: "Redshirt-3", color: "Red"},
+{name: "Spock", color: "Blue"},
+{name: "Tina Lawton", color: "Blue"},
+{name: "Uhura", color: "Red"},
+{name: "Vinci", color: "Red"}
+];
+
+// http://blog.thomsonreuters.com/index.php/mobile-patent-suits-graphic-of-the-day/
+var links = [
+{ep_num: "102", source: "Blueshirt", target: "Life Support", source_color: "blue"},
+{ep_num: "102", source: "Gold_skirt-1", target: "Communications Officer"},
+{ep_num: "102", source: "Goldshirt-1", target: "Navigator"},
+{ep_num: "102", source: "Goldshirt-2", target: "Helmsman"},
+{ep_num: "102", source: "Kirk", target: "Captain"},
+{ep_num: "102", source: "Lt. Leslie", target: ".."},
+{ep_num: "102", source: "McCoy", target: "Chief Medical Officer"},
+{ep_num: "102", source: "Rand", target: "Yeoman"},
+{ep_num: "102", source: "Redshirt-1", target: "Transporter Operator"},
+{ep_num: "102", source: "Redshirt-2", target: "Security"},
+{ep_num: "102", source: "Redshirt-3", target: "Engineering Station"},
+{ep_num: "102", source: "Spock", target: "Science Station"},
+{ep_num: "102", source: "Tina Lawton", target: "Yeoman"},
+{ep_num: "102", source: "Uhura", target: "Communications Officer"},
+{ep_num: "102", source: "Vinci", target: "Security"},
+{ep_num: "102", source: "Blueshirt", target: "Bridge"},
+{ep_num: "102", source: "Gold_skirt", target: "Bridge"},
+{ep_num: "102", source: "Goldshirt-1", target: "Bridge"},
+{ep_num: "102", source: "Goldshirt-2", target: "Bridge"},
+{ep_num: "102", source: "Lt. Leslie", target: "Enterprise"},
+{ep_num: "102", source: "Kirk", target: "Bridge"},
+{ep_num: "102", source: "McCoy", target: "Sick Bay"},
+{ep_num: "102", source: "Rand", target: "Bridge"},
+{ep_num: "102", source: "Redshirt-1", target: "Transporter Room"},
+{ep_num: "102", source: "Redshirt-2", target: "Enterprise"},
+{ep_num: "102", source: "Redshirt-3", target: "Bridge"},
+{ep_num: "102", source: "Spock", target: "Bridge"},
+{ep_num: "102", source: "Tina Lawton", target: "Enterprise"},
+{ep_num: "102", source: "Uhura", target: "Bridge"},
+{ep_num: "102", source: "Vinci", target: "Enterprise"},
+
+
+{ep_num: "102", source: "Bridge", target: "Enterprise"},
+{ep_num: "102", source: "Transporter Room", target: "Enterprise"},
+{ep_num: "102", source: "Sick Bay", target: "Enterprise"}
+];
+
+
+var nodes = {};
+
+// Compute the distinct nodes from the links.
+links.forEach(function(link) {
+  link.source = nodes[link.source] || (nodes[link.source] = {name: link.source});
+  link.target = nodes[link.target] || (nodes[link.target] = {name: link.target});
+});
+
+// added code to try to put color into the nodes object
+links.forEach(function(nodes) {
+  console.log(nodes)
+//  nodes.source = shirt[nodes.name] || nodes.color = shirt.color;
+});
+/*
+*/
+
+
+var width = 960,
+    height = 700;
+
+var force = d3.layout.force()
+    .nodes(d3.values(nodes))
+    .links(links)
+    .size([width, height])
+    .linkDistance(40)
+    .charge(-300)
+    .on("tick", tick)
+    .start();
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+var link = svg.selectAll(".link")
+    .data(force.links())
+    .enter().append("line")
+    .attr("class", "link");
+
+var node = svg.selectAll(".node")
+    .data(force.nodes())
+    .enter().append("g")
+    .attr("class", "node")
+    .on("mouseover", mouseover)
+    .on("mouseout", mouseout)
+    .call(force.drag);
+
+node.append("circle")
+    .attr("r", 8);
+
+node.append("text")
+    .attr("x", 12)
+    .attr("dy", ".35em")
+    .text(function(d) { return d.name; });
+
+function tick() {
+  link
+      .attr("x1", function(d) { return d.source.x; })
+      .attr("y1", function(d) { return d.source.y; })
+      .attr("x2", function(d) { return d.target.x; })
+      .attr("y2", function(d) { return d.target.y; });
+
+  node
+      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+}
+
+function mouseover() {
+  d3.select(this).select("circle").transition()
+      .duration(750)
+      .attr("r", 16);
+}
+
+function mouseout() {
+  d3.select(this).select("circle").transition()
+      .duration(750)
+      .attr("r", 8);
+}
+
+</script>
