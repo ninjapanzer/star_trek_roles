@@ -1,0 +1,22 @@
+{
+  "name": "star_trek_roles",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pearvert/star_trek_roles.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "xls_to_json_api": "git@github.com:ninjapanzer/xlsx_to_json_api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pearvert/star_trek_roles/issues"
+  },
+  "homepage": "https://github.com/pearvert/star_trek_roles#readme"
+}
